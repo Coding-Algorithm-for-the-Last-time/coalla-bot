@@ -10,12 +10,13 @@ intents = discord.Intents.default()
 intents.message_content = True
 
 bot = commands.Bot(command_prefix=f"<@{env('DISCORD_BOT_ID')}> ", intents=intents)
-
+message = "코!🐨알!🐨라!🐨\n이번에도 알고리즘 끝장내봅시다!!🐨\n\n이번주 토요일에 참석하는 분은 아래 이모지를 눌러주세요 .<"
 
 @bot.event
 async def on_ready():
-    await bot.get_channel(env("DISCORD_TEST_CHANNEL_ID")).send("hello")
-    exit(0)
+    sent_message = await bot.get_channel(int(env("DISCORD_TEST_CHANNEL_ID"))).send(message)
+    await sent_message.add_reaction("✅")
+    await bot.close()
 
 
 bot.run(env("DISCORD_BOT_TOKEN"))
