@@ -17,4 +17,9 @@ jobs:
           pip install -r requirements.txt
       - name: Attendee check message
         working-directory: ./src
+        env:
+          DISCORD_COALLA_CHANNEL_ID: ${{ secrets.DISCORD_COALLA_CHANNEL_ID }}
+          DISCORD_TEST_CHANNEL_ID: ${{ secrets.DISCORD_TEST_CHANNEL_ID }}
+          DISCORD_BOT_ID: ${{ secrets.DISCORD_BOT_ID }}
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
         run: python schedule.py
