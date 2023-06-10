@@ -37,6 +37,7 @@ async def on_message(message):
     #     print(message.author.id)
     #     print(message.content)
     #     print(message.reference)
+    # test for pull request
 
     channel_id = [
         int(env("DISCORD_TEST_CHANNEL_ID")),
