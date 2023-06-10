@@ -14,7 +14,7 @@ bot = commands.Bot(command_prefix=f"<@{env('DISCORD_BOT_ID')}> ", intents=intent
 
 @bot.event
 async def on_ready():
-    await bot.get_channel(1109305853481328650).send("hello")
+    await bot.get_channel(env("DISCORD_TEST_CHANNEL_ID")).send("hello")
     exit(0)
 
 
