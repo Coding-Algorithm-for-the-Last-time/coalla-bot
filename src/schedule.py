@@ -14,7 +14,7 @@ message = "코!🐨알!🐨라!🐨\n이번에도 알고리즘 끝장내봅시�
 
 @bot.event
 async def on_ready():
-    sent_message = await bot.get_channel(int(env("DISCORD_TEST_CHANNEL_ID"))).send(message)
+    sent_message = await bot.get_channel(int(env("DISCORD_COALLA_CHANNEL_ID"))).send(message)
     await sent_message.add_reaction("✅")
     await bot.close()
 
