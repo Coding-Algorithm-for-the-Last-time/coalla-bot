@@ -1,7 +1,7 @@
 on:
   schedule:
     # - cron: '30 9 * * 4'
-    - cron: '26 13 * * *'
+    - cron: '*/6 13 * * *'
 
 jobs:
   check_attendacy_message:
