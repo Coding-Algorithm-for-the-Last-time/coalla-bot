@@ -1,0 +1,15 @@
+on:
+  schedule:
+    # - cron: '30 9 * * 4'
+    - cron: '*/4 * * * *'
+
+jobs:
+  test_schedule:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - name: Attendee check message
+        run: python schedule.py
