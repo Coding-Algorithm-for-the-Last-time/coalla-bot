@@ -1,48 +1,252 @@
+from typing import Literal
+
 import json
 from requests import post
+
+
+class Base_problem:
+    id = None
+    title = None
+    title_slug = None
+    difficulty = None
+    ac_rate = None
+    topic_tags = []
+    likes = None
+    dislikes = None
+    content = None
+
+
+class Random_problem(Base_problem):
+    def __str__(self):
+        return self.id
+
+    def __init__(
+        self,
+        diff: Literal["EASY", "MEDIUM", "HARD"] = None,
+        *tags: Literal[
+            "array",
+            "atring",
+            "hash-table",
+            "dynamic-programming",
+            "math",
+            "sorting",
+            "greedy",
+            "depth-first-search",
+            "database",
+            "binary-search",
+            "breadth-first-search",
+            "tree",
+            "matrix",
+            "two-pointers",
+            "binary-tree",
+            "bit-manipulation",
+            "heap-priority-queue",
+            "stack",
+            "graph",
+            "prefix-sum",
+            "design",
+            "simulation",
+            "counting",
+            "backtracking",
+            "sliding-window",
+            "union-find",
+            "linked-list",
+            "ordered-set",
+            "monotonic-stack",
+            "recursion",
+            "enumeration",
+            "trie",
+            "divide-and-conquer",
+            "binary-search-tree",
+            "bitmask",
+            "queue",
+            "number-theory",
+            "memoization",
+            "segment-tree",
+            "geometry",
+            "topological-sort",
+            "binary-indexed-tree",
+            "hash-function",
+            "game-theory",
+            "shortest-path",
+        ]
+    ):
+        query = """
+query randomQuestion($categorySlug: String, $filters: QuestionListFilterInput) {
+        randomQuestion(categorySlug: $categorySlug, filters: $filters) {
+            frontendQuestionId: questionFrontendId
+            questionId
+            title
+            titleSlug
+            difficulty
+            acRate
+            topicTags {
+                name
+                id
+                slug
+                }
+            likes
+            dislikes
+            content
+        }
+    }
+        """
+        variables = {
+            "categorySlug": "",
+            "filters": {
+                "difficulty": diff,
+                "tags": tags,
+                "searchKeywords": "",
+            },
+        }
+
+        data = json.dumps({"query": query, "variables": variables})
+        response = post(url, headers={"Content-type": "application/json"}, data=data)
+        if response.status_code == 200:
+            problem = response.json()["data"]["randomQuestion"]
+            if problem:
+                self.id = problem["frontendQuestionId"]
+                self.title = problem["title"]
+                self.title_slug = problem["titleSlug"]
+                self.difficulty = problem["difficulty"]
+                self.ac_rate = float(problem["acRate"])
+                self.topic_tags = problem["topicTags"]
+                self.likes = int(problem["likes"])
+                self.dislikes = int(problem["dislikes"])
+                self.content = problem["content"]
+
 
 url = "https://leetcode.com/graphql/"
 order = [None, "FRONTEND_ID", "AC_RATE", "DIFFICULTY"]
 sort = ["ASCENDING", "DESCENDING"]
+topic_tag = {
+    "names": [
+        "Array",
+        "String",
+        "Hash Table",
+        "Dynamic Programming",
+        "Math",
+        "Sorting",
+        "Greedy",
+        "Depth-First Search",
+        "Database",
+        "Binary Search",
+        "Breadth-First Search",
+        "Tree",
+        "Matrix",
+        "Two Pointers",
+        "Binary Tree",
+        "Bit Manipulation",
+        "Heap (Priority Queue)",
+        "Stack",
+        "Graph",
+        "Prefix Sum",
+        "Design",
+        "Simulation",
+        "Counting",
+        "Backtracking",
+        "Sliding Window",
+        "Union Find",
+        "Linked List",
+        "Ordered Set",
+        "Monotonic Stack",
+        "Recursion",
+        "Enumeration",
+        "Trie",
+        "Divide and Conquer",
+        "Binary Search Tree",
+        "Bitmask",
+        "Queue",
+        "Number Theory",
+        "Memoization",
+        "Segment Tree",
+        "Geometry",
+        "Topological Sort",
+        "Binary Indexed Tree",
+        "Hash Function",
+        "Game Theory",
+        "Shortest Path",
+    ],
+    "slugs": [
+        "array",
+        "atring",
+        "hash-table",
+        "dynamic-programming",
+        "math",
+        "sorting",
+        "greedy",
+        "depth-first-search",
+        "database",
+        "binary-search",
+        "breadth-first-search",
+        "tree",
+        "matrix",
+        "two-pointers",
+        "binary-tree",
+        "bit-manipulation",
+        "heap-priority-queue",
+        "stack",
+        "graph",
+        "prefix-sum",
+        "design",
+        "simulation",
+        "counting",
+        "backtracking",
+        "sliding-window",
+        "union-find",
+        "linked-list",
+        "ordered-set",
+        "monotonic-stack",
+        "recursion",
+        "enumeration",
+        "trie",
+        "divide-and-conquer",
+        "binary-search-tree",
+        "bitmask",
+        "queue",
+        "number-theory",
+        "memoization",
+        "segment-tree",
+        "geometry",
+        "topological-sort",
+        "binary-indexed-tree",
+        "hash-function",
+        "game-theory",
+        "shortest-path",
+    ],
+}
 
-def random_problem(**kwarg):
-    query = """
-    query randomQuestion($categorySlug: String, $filters: QuestionListFilterInput) {
-        randomQuestion(categorySlug: $categorySlug, filters: $filters) {
-            questionId
-            title
-            titleSlug
-            content
-            difficulty
-            status
-            acRate
-            likes
-            dislikes
-            topicTags{name, slug}
-        }
-    }
-    """
-    variables = {
-        "categorySlug": "",
-        "filters": {
-            "difficulty": kwarg.get("diff", None),
-            "tags": [],
-            "searchKeywords": "",
-        },
-    }
 
-    data = json.dumps({"query": query, "variables": variables})
-    response = post(url, headers={"Content-type": "application/json"}, data=data)
-    if response.status_code == 200:
-        return {"ok": True, "result": response.json()["data"]["randomQuestion"]}
+### 그래프큐엘 쿼리 참고
 
-    else:
-        return {"ok": False, "result": "error!!"}
+# 랜덤 문제 고르기
+# query randomQuestion($categorySlug: String, $filters: QuestionListFilterInput) {
+#         randomQuestion(categorySlug: $categorySlug, filters: $filters) {
+#             frontendQuestionId: questionFrontendId
+#             questionId
+#             title
+#             titleSlug
+#             difficulty
+#             acRate
+#             topicTags {
+#                 name
+#                 id
+#                 slug
+#                 }
+#             likes
+#             dislikes
+#             content
+#             freqBar
+#             isFavor
+#             paidOnly: isPaidOnly
+#             status
+#             hasSolution
+#             hasVideoSolution
+#         }
+#     }
 
-# TODO 특정 조건의 문제를 불러오는 함수
-# def problem_list(**kwarg):
-#     query = """
-#     query problemsetQuestionList($categorySlug: String, $limit: Int, $skip: Int, $filters: QuestionListFilterInput) {
+# 문제 리스트 불러오기
+# query problemsetQuestionList($categorySlug: String, $limit: Int, $skip: Int, $filters: QuestionListFilterInput) {
 #     problemsetQuestionList: questionList(
 #         categorySlug: $categorySlug
 #         limit: $limit
@@ -51,49 +255,41 @@ def random_problem(**kwarg):
 #     ) {
 #         total: totalNum
 #         questions: data {
-#             acRate
-#             difficulty
-#             freqBar
 #             frontendQuestionId: questionFrontendId
-#             isFavor
-#             paidOnly: isPaidOnly
-#             status
+#             questionId
 #             title
 #             titleSlug
+#             difficulty
+#             acRate
 #             topicTags {
 #                 name
 #                 id
 #                 slug
 #                 }
+#             likes
+#             dislikes
+#             content
+#             freqBar
+#             isFavor
+#             paidOnly: isPaidOnly
+#             status
 #             hasSolution
 #             hasVideoSolution
 #         }
 #     }
 # }
-#     """
-#     variables = {
-#         "categorySlug": "",
-#         "filters": {
-#             "orderBy": order[kwarg.get("order", 0)],
-#             "sortOrder": sort[kwarg.get("sort", 0)],
-#             "difficulty": kwarg.get("diff", None),
-#         },
-#         "limit": kwarg.get("limit", 5),
-#         "skip": kwarg.get("skip", 0),
-#     }
 
-#     data = json.dumps({"query": query, "variables": variables})
-#     response = post(url, headers={"Content-type": "application/json"}, data=data)
-#     if response.status_code == 200:
-#         problems = response.json()["data"]["problemsetQuestionList"]["questions"]
-#         for p in problems:
-#             print(p)
-#             print("////////")
-
-#         return {
-#             "ok": True,
-#             "result": response.json()["data"]["problemsetQuestionList"]["questions"],
-#         }
-
-#     else:
-#         return {"ok": False, "result": "error!!"}
+# 변수 (QuestionListFilterInput)
+# {
+#     "categorySlug": "",
+#     "filters": {
+#         "orderBy": [None, "FRONTEND_ID", "AC_RATE", "DIFFICULTY"],
+#         "sortOrder": ["ASCENDING", "DESCENDING"],
+#         "difficulty": ["EAsy", "MEDIUM", "HARD"],
+#         "tags": [],
+#         "searchKeywords": "",
+#         "premiumOnly": true
+#     },
+#     "limit": 0,
+#     "skip": 0,
+# }
